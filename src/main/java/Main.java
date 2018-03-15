@@ -37,12 +37,20 @@ public class Main {
                 .create();
 
         Http baseRequest = new HttpRequest()
-                .subscribe(requestGet);
+                .subscribe(
+                        requestGet,
+                        response -> System.out.println("Hello World ->" + response),
+                        e -> new RuntimeException("Hello, exception!")
+                );
 
         baseRequest.doGet(queryParam);
 
         Http baseRequestPost = new HttpRequest()
-                .subscribe(requestPost);
+                .subscribe(
+                        requestPost,
+                        (response) -> System.out.println("Hello World ->" + response),
+                        e -> new RuntimeException("Hello, exception!")
+                );
 
         baseRequestPost.doPost(bodyParam);
     }

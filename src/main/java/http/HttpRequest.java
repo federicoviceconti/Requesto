@@ -30,8 +30,8 @@ public class HttpRequest extends BaseRequest implements Http {
     }
 
     @Override
-    public BaseRequest subscribe(Request request) {
-        return super.subscribe(request);
+    public BaseRequest subscribe(Request request, Consumer<String> onNext, Consumer<Exception> onError) {
+        return super.subscribe(request, onNext, onError);
     }
 
     @Override
