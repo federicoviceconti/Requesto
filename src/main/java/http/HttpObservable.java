@@ -7,5 +7,5 @@ import java.io.InputStream;
 public interface HttpObservable<T> {
     <T> T subscribe(Request request);
     void unsubscribe();
-    void notifyHttp(InputStream response);
+    String notifyHttp(InputStream response);
 }

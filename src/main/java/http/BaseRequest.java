@@ -2,6 +2,7 @@ package http;
 
 import param.Param;
 import request.Request;
+import request.RequestMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class BaseRequest implements Http, HttpObservable {
@@ -19,11 +19,11 @@ public abstract class BaseRequest implements Http, HttpObservable {
 
     protected Function<Param<Object, Object, String>, HttpURLConnection> openConnection = myParam -> {
         try {
-            URL url = new URL(request.getBaseUrl() + myParam);
+            URL url = new URL(request.getBaseUrl() +
+                    (request.getRequestMethod() == RequestMethod.GET ? myParam : ""));
+
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(request.getRequestMethod().name());
-
-            System.out.println(request.getBaseUrl()+myParam);
             con.addRequestProperty("User-Agent", request.getRequestUserAgent().getUserAgent());
             return con;
         } catch (IOException e) {
@@ -47,7 +47,7 @@ public abstract class BaseRequest implements Http, HttpObservable {
 
     @Override
     public BaseRequest subscribe(Request request) {
-        if(this.request == null) {
+        if (this.request == null) {
             this.request = request;
             this.requesto = new Requesto();
 
@@ -69,7 +69,7 @@ public abstract class BaseRequest implements Http, HttpObservable {
     }
 
     @Override
-    public void notifyHttp(InputStream response) {
+    public String notifyHttp(InputStream response) {
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(response));
@@ -82,8 +82,9 @@ public abstract class BaseRequest implements Http, HttpObservable {
             in.close();
 
             requesto.update(content.toString());
-        }catch (Exception ignored) {
-
+            return content.toString();
+        } catch (Exception ignored) {
+            throw new RuntimeException("Error processing response!");
         }
     }
 }

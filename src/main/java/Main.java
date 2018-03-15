@@ -1,8 +1,11 @@
 import http.BaseRequest;
 import http.Http;
 import http.HttpRequest;
+import param.BodyParam;
+import param.Param;
 import param.QueryParam;
 import request.Request;
+import request.RequestContent;
 import request.RequestMethod;
 import request.RequestUserAgent;
 
@@ -10,19 +13,37 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        QueryParam queryParam = new QueryParam(new HashMap<>());
+        Param<String, String, String> queryParam = new QueryParam(new HashMap<>());
         queryParam.addParam("q", "Hello+World!");
 
-        Request request = new Request.Builder()
+        Param<String, String, String> bodyParam = new BodyParam(new HashMap<>());
+        bodyParam.addParam("title", "foo");
+        bodyParam.addParam("body", "bar");
+        bodyParam.addParam("userId", "1");
+
+        Request requestGet = new Request.Builder()
                 .setBaseUrl("https://www.google.it/")
                 .addSubPathToBaseUrl("search")
                 .setRequestMethod(RequestMethod.GET)
                 .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
                 .create();
 
+        Request requestPost = new Request.Builder()
+                .setBaseUrl("https://jsonplaceholder.typicode.com")
+                .addSubPathToBaseUrl("posts")
+                .setRequestMethod(RequestMethod.POST)
+                .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
+                .setContentType(RequestContent.JSON)
+                .create();
+
         Http baseRequest = new HttpRequest()
-                .subscribe(request);
+                .subscribe(requestGet);
 
         baseRequest.doGet(queryParam);
+
+        Http baseRequestPost = new HttpRequest()
+                .subscribe(requestPost);
+
+        baseRequestPost.doPost(bodyParam);
     }
 }
