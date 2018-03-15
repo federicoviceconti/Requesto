@@ -3,15 +3,22 @@ Simple HTTP Client.
 
 To see how it works you can check the Main java class into src folder.
 
+We can specify GET Url parameter in this manner:
 ```java
 Param<String, String, String> queryParam = new QueryParam(new HashMap<>());
 queryParam.addParam("q", "Hello+World!");
+```
 
+Also, body parameter for POST request
+```java
 Param<String, String, String> bodyParam = new BodyParam(new HashMap<>());
 bodyParam.addParam("title", "foo");
 bodyParam.addParam("body", "bar");
 bodyParam.addParam("userId", "1");
+```
 
+The following example initialize requests:
+```java
 Request requestGet = new Request.Builder()
   .setBaseUrl("https://www.google.it/")
   .addSubPathToBaseUrl("search")
