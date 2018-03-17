@@ -22,9 +22,10 @@ public class Main {
         bodyParam.addParam("userId", "1");
 
         Request requestGet = new Request.Builder()
-                .setBaseUrl("https://www.google.it/")
-                .addSubPathToBaseUrl("search")
-                .setRequestMethod(RequestMethod.GET)
+                .setBaseUrl("https://jsonplaceholder.typicode.com")
+                .addSubPathToBaseUrl("posts")
+                .addSubPathToBaseUrl("1")
+                .setRequestMethod(RequestMethod.DELETE)
                 .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
                 .create();
 
@@ -43,7 +44,7 @@ public class Main {
                         e -> new RuntimeException("Hello, exception!")
                 );
 
-        baseRequest.doGet(queryParam);
+        baseRequest.doRequest(queryParam);
 
         Http baseRequestPost = new HttpRequest()
                 .subscribe(
@@ -52,6 +53,6 @@ public class Main {
                         e -> new RuntimeException("Hello, exception!")
                 );
 
-        baseRequestPost.doPost(bodyParam);
+        baseRequestPost.doRequestWithBody(bodyParam);
     }
 }

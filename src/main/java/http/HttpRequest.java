@@ -35,7 +35,7 @@ public class HttpRequest extends BaseRequest implements Http {
     }
 
     @Override
-    public <T extends Param> void doPost(T bodyParam) {
+    public <T extends Param> void doRequestWithBody(T bodyParam) {
         new Thread(() -> notifyHttp(makeRequest(bodyParam, connection -> {
             try {
                 connection.setRequestProperty("Content-Type", request.getRequestContentType().name());
@@ -50,7 +50,7 @@ public class HttpRequest extends BaseRequest implements Http {
     }
 
     @Override
-    public <T extends Param> void doGet(T queryParam) {
+    public <T extends Param> void doRequest(T queryParam) {
         new Thread(() -> notifyHttp(makeRequest(queryParam, connection -> connection))).start();
     }
 
