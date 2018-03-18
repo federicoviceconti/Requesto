@@ -48,10 +48,9 @@ public class Utils {
 
     public static HeaderResponseField getHeaderByString(String key) {
         for(HeaderResponseField headerResponseField: HeaderResponseField.values()) {
-            if(headerResponseField != null && headerResponseField.getHeaderName().equals(key)) return headerResponseField;
-            else return HeaderResponseField.RESPONSE_TYPE;
+            if(key != null && headerResponseField.getHeaderName().equals(key)) return headerResponseField;
         }
 
-        return null;
+        return HeaderResponseField.RESPONSE_TYPE;
     }
 }

@@ -15,6 +15,6 @@ public enum HeaderResponseField {
     }
 
     public String getHeaderName() {
-        return headerName;
+        return headerName == null ? "" : headerName;
     }
 }

@@ -8,6 +8,7 @@ import request.Request;
 import request.RequestContent;
 import request.RequestMethod;
 import request.RequestUserAgent;
+import response.HeaderResponseField;
 
 import java.util.HashMap;
 
@@ -40,7 +41,7 @@ public class Main {
         Http baseRequest = new HttpRequest()
                 .subscribe(
                         requestGet,
-                        response -> System.out.println("Content ->" + response.getContent()),
+                        response -> System.out.println("Content ->" + response.getResponseHeader(HeaderResponseField.CONTENT_LEN)),
                         e -> new RuntimeException("Hello, exception!")
                 );
 
@@ -49,7 +50,7 @@ public class Main {
         Http baseRequestPost = new HttpRequest()
                 .subscribe(
                         requestPost,
-                        (response) -> System.out.println("Content ->" + response.getContent()),
+                        (response) -> System.out.println("Content ->" + response.getResponseHeader(HeaderResponseField.CONTENT_LEN)),
                         e -> new RuntimeException("Hello, exception!")
                 );
 
