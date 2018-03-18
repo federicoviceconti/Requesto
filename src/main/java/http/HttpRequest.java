@@ -2,6 +2,7 @@ package http;
 
 import param.Param;
 import request.Request;
+import response.Response;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -23,14 +26,14 @@ public class HttpRequest extends BaseRequest implements Http {
         super(null);
     }
 
-    private <T extends Param> InputStream makeRequest(T param, UnaryOperator<URLConnection> action) {
+    private <T extends Param> URLConnection makeRequest(T param, UnaryOperator<URLConnection> action) {
         HttpURLConnection connection = openConnection.apply(param);
         action.apply(connection);
         return sendStream.apply(connection);
     }
 
     @Override
-    public BaseRequest subscribe(Request request, Consumer<String> onNext, Consumer<Exception> onError) {
+    public BaseRequest subscribe(Request request, Consumer<Response> onNext, Consumer<Exception> onError) {
         return super.subscribe(request, onNext, onError);
     }
 

@@ -3,13 +3,19 @@ package http;
 import param.Param;
 import request.Request;
 import request.RequestMethod;
-
+import response.HeaderResponseField;
+import response.HttpResponse;
+import response.Response;
+import utils.Utils;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -37,17 +43,10 @@ public abstract class BaseRequest implements Http, HttpObservable<BaseRequest> {
         this.request = request;
     }
 
-    protected Function<HttpURLConnection, InputStream> sendStream = con -> {
-        try {
-            return con.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    };
+    protected Function<HttpURLConnection, URLConnection> sendStream = con -> con;
 
     @Override
-    public BaseRequest subscribe(Request request, Consumer<String> onNext, Consumer<Exception> onError) {
+    public BaseRequest subscribe(Request request, Consumer<Response> onNext, Consumer<Exception> onError) {
         if (this.request == null) {
 
             synchronized (object) {
@@ -68,10 +67,17 @@ public abstract class BaseRequest implements Http, HttpObservable<BaseRequest> {
     }
 
     @Override
-    public String notifyHttp(InputStream response) {
+    public String notifyHttp(URLConnection connection) {
+        Map<HeaderResponseField, List<String>> headerResponseFieldStringMap = new HashMap<>();
+
         try {
+            //Set header fields
+            for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
+                headerResponseFieldStringMap.put(Utils.getHeaderByString(entry.getKey()), entry.getValue());
+            }
+
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(response));
+                    new InputStreamReader(connection.getInputStream()));
             String inputLine;
 
             StringBuilder content = new StringBuilder();
@@ -80,9 +86,12 @@ public abstract class BaseRequest implements Http, HttpObservable<BaseRequest> {
             }
             in.close();
 
-            requesto.update(content.toString());
+            //Set response with header and content and send to observer update
+            Response response = new HttpResponse(headerResponseFieldStringMap, content.toString());
+            requesto.update(response);
             return content.toString();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return "";

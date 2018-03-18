@@ -1,5 +1,7 @@
 package utils;
 
+import response.HeaderResponseField;
+
 import java.util.Map;
 
 public class Utils {
@@ -42,5 +44,14 @@ public class Utils {
         String result = resultBuilder.toString();
         return result.lastIndexOf("&") == result.length() - 1 ?
                 result.substring(0, result.length() - 1) : result;
+    }
+
+    public static HeaderResponseField getHeaderByString(String key) {
+        for(HeaderResponseField headerResponseField: HeaderResponseField.values()) {
+            if(headerResponseField != null && headerResponseField.getHeaderName().equals(key)) return headerResponseField;
+            else return HeaderResponseField.RESPONSE_TYPE;
+        }
+
+        return null;
     }
 }

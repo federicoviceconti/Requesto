@@ -40,7 +40,7 @@ public class Main {
         Http baseRequest = new HttpRequest()
                 .subscribe(
                         requestGet,
-                        response -> System.out.println("Hello World ->" + response),
+                        response -> System.out.println("Hello World ->" + response.getContent()),
                         e -> new RuntimeException("Hello, exception!")
                 );
 
@@ -49,7 +49,7 @@ public class Main {
         Http baseRequestPost = new HttpRequest()
                 .subscribe(
                         requestPost,
-                        (response) -> System.out.println("Hello World ->" + response),
+                        (response) -> System.out.println("Content ->" + response.getContent()),
                         e -> new RuntimeException("Hello, exception!")
                 );
 
