@@ -1,16 +1,12 @@
 package utils;
 
+import com.sun.istack.internal.NotNull;
 import response.HeaderResponseField;
 
 import java.util.Map;
 
 public class Utils {
-    /**
-     *
-     * @param x
-     * @return
-     */
-    public static String checkNullOrEmpty(String... x) {
+    public static String checkNullOrEmpty(@NotNull String... x) {
         String errorParam = "";
         for(String toCheck: x) {
             errorParam = toCheck != null && !toCheck.isEmpty() ? "" : ", " + toCheck;
@@ -27,16 +23,11 @@ public class Utils {
         return x != null;
     }
 
-    /**
-     *
-     * @param x
-     * @return
-     */
     public static boolean checkIfIntegerIsValid(int x) {
         return x >= 0;
     }
 
-    public static String buildParams(StringBuilder resultBuilder, Map<String, String> params) {
+    public static String buildParams(StringBuilder resultBuilder, @NotNull Map<String, String> params) {
         for(String param: params.keySet()) {
             resultBuilder.append(param).append("=").append(params.get(param)).append("&");
         }

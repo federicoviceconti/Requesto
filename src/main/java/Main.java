@@ -14,14 +14,17 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        Param<String, String, String> queryParam = new QueryParam(new HashMap<>());
+        //Construct params in URL
+        Param<String, String> queryParam = new QueryParam(new HashMap<>());
         queryParam.addParam("q", "Hello+World!");
 
-        Param<String, String, String> bodyParam = new BodyParam(new HashMap<>());
+        //Construct params in BODY
+        Param<String, String> bodyParam = new BodyParam(new HashMap<>());
         bodyParam.addParam("title", "foo");
         bodyParam.addParam("body", "bar");
         bodyParam.addParam("userId", "1");
 
+        //Create GET request
         Request requestGet = new Request.Builder()
                 .setBaseUrl("https://jsonplaceholder.typicode.com")
                 .addSubPathToBaseUrl("posts")
@@ -30,6 +33,7 @@ public class Main {
                 .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
                 .create();
 
+        //Create POST request
         Request requestPost = new Request.Builder()
                 .setBaseUrl("https://jsonplaceholder.typicode.com")
                 .addSubPathToBaseUrl("posts")
@@ -38,22 +42,26 @@ public class Main {
                 .setContentType(RequestContent.JSON)
                 .create();
 
+        //Subscribe to previous GET request
         Http baseRequest = new HttpRequest()
                 .subscribe(
                         requestGet,
-                        response -> System.out.println("Content ->" + response.getResponseHeader(HeaderResponseField.CONTENT_LEN)),
+                        response -> System.out.println("Content ->" + response.getContent()),
                         e -> new RuntimeException("Hello, exception!")
                 );
 
-        baseRequest.doRequest(queryParam);
-
+        //Subscribe to previous POST request
         Http baseRequestPost = new HttpRequest()
                 .subscribe(
                         requestPost,
-                        (response) -> System.out.println("Content ->" + response.getResponseHeader(HeaderResponseField.CONTENT_LEN)),
+                        (response) -> System.out.println("Content-Length ->"
+                                + response.getResponseHeader(HeaderResponseField.CONTENT_LEN)
+                        ),
                         e -> new RuntimeException("Hello, exception!")
                 );
 
+        //Do requests
+        baseRequest.doRequest(queryParam);
         baseRequestPost.doRequestWithBody(bodyParam);
     }
 }

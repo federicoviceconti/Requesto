@@ -6,11 +6,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BaseParam implements Param<String, String, String> {
+public abstract class BaseParam implements Param<String, String> {
     protected Map<String, String> params;
     private final Object object = new Object();
 
-    public BaseParam(Map<String, String> params) {
+    BaseParam(Map<String, String> params) {
         this.params = params;
     }
 

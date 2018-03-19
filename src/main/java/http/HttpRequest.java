@@ -26,12 +26,6 @@ public class HttpRequest extends BaseRequest implements Http {
         super(null);
     }
 
-    private <T extends Param> URLConnection makeRequest(T param, UnaryOperator<URLConnection> action) {
-        HttpURLConnection connection = openConnection.apply(param);
-        action.apply(connection);
-        return sendStream.apply(connection);
-    }
-
     @Override
     public BaseRequest subscribe(Request request, Consumer<Response> onNext, Consumer<Exception> onError) {
         return super.subscribe(request, onNext, onError);

@@ -18,20 +18,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
+/**
+ * Base request class could be inherited to different kind of request.
+ */
 public abstract class BaseRequest implements Http, HttpObservable<BaseRequest> {
     protected Request request;
     private ObserverRequesto requesto;
     private final Object object = new Object();
 
-    protected Function<Param<Object, Object, String>, HttpURLConnection> openConnection = myParam -> {
+    BaseRequest(Request request) {
+        this.request = request;
+    }
+
+    /**
+     * Contains steps to establish connection and return it when it's finished.
+     * User-agent it's mandatory!
+     */
+    protected Function<Param<Object, Object>, HttpURLConnection> openConnection = myParam -> {
         try {
+            //If is a GET request, params must be concatenated with URL
             URL url = new URL(request.getBaseUrl() +
                     (request.getRequestMethod() == RequestMethod.GET ? myParam : ""));
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(request.getRequestMethod().name());
+
+            assert request.getRequestUserAgent().getUserAgent() != null : "User-Agent must be null!";
             con.addRequestProperty("User-Agent", request.getRequestUserAgent().getUserAgent());
+
             return con;
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,11 +55,23 @@ public abstract class BaseRequest implements Http, HttpObservable<BaseRequest> {
         }
     };
 
-    BaseRequest(Request request) {
-        this.request = request;
-    }
-
+    /**
+     * Send connection stream.
+     */
     protected Function<HttpURLConnection, URLConnection> sendStream = con -> con;
+
+    /**
+     * Use the previous variable to make request
+     * @param param the param of the request
+     * @param action is used if we want to customize request
+     * @param <T> first argument should be a param or a subclass
+     * @return
+     */
+    final <T extends Param> URLConnection makeRequest(T param, UnaryOperator<URLConnection> action) {
+        HttpURLConnection connection = openConnection.apply(param);
+        action.apply(connection);
+        return sendStream.apply(connection);
+    }
 
     @Override
     public BaseRequest subscribe(Request request, Consumer<Response> onNext, Consumer<Exception> onError) {
