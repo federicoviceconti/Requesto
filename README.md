@@ -5,26 +5,32 @@ To see how it works you can check the Main java class into src folder.
 
 We can specify GET Url parameter in this manner:
 ```java
-Param<String, String, String> queryParam = new QueryParam(new HashMap<>());
+//Construct params in URL
+Param<String, String> queryParam = new QueryParam(new HashMap<>());
 queryParam.addParam("q", "Hello+World!");
 ```
-
-Also, body parameter for POST request
+We can specify POST Body in this manner:
+We can specify GET Url parameter in this manner:
 ```java
-Param<String, String, String> bodyParam = new BodyParam(new HashMap<>());
+//Construct params in BODY
+Param<String, String> bodyParam = new BodyParam(new HashMap<>());
 bodyParam.addParam("title", "foo");
 bodyParam.addParam("body", "bar");
 bodyParam.addParam("userId", "1");
 ```
 
-The following example initialize requests:
+Create some requests:
 ```java
+//Create GET request
 Request requestGet = new Request.Builder()
-  .setBaseUrl("https://www.google.it/")
-  .addSubPathToBaseUrl("search")
-  .setRequestMethod(RequestMethod.GET)
+  .setBaseUrl("https://jsonplaceholder.typicode.com")
+  .addSubPathToBaseUrl("posts")
+  .addSubPathToBaseUrl("1")
+  .setRequestMethod(RequestMethod.DELETE)
   .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
-  .create();
+.create();
+
+//Create POST request
 Request requestPost = new Request.Builder()
   .setBaseUrl("https://jsonplaceholder.typicode.com")
   .addSubPathToBaseUrl("posts")
@@ -32,21 +38,24 @@ Request requestPost = new Request.Builder()
   .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
   .setContentType(RequestContent.JSON)
   .create();
+        //Subscribe to previous GET request
 Http baseRequest = new HttpRequest()
   .subscribe(
   requestGet,
-  response -> System.out.println("Hello World ->" + response),
-  e -> new RuntimeException("Hello, exception!")
+  response -> System.out.println("Content ->" + response.getContent()),
+    e -> new RuntimeException("Hello, exception!")
 );
-
-baseRequest.doGet(queryParam);
-
+        //Subscribe to previous POST request
 Http baseRequestPost = new HttpRequest()
   .subscribe(
-  requestPost,
-  (response) -> System.out.println("Hello World ->" + response),
+requestPost,
+  (response) -> System.out.println("Content-Length ->"
+  + response.getResponseHeader(HeaderResponseField.CONTENT_LEN)
+),
   e -> new RuntimeException("Hello, exception!")
 );
 
-baseRequestPost.doPost(bodyParam);
+//Do requests
+baseRequest.doRequest(queryParam);
+baseRequestPost.doRequestWithBody(bodyParam);
 ```
