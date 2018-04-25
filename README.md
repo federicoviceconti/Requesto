@@ -10,7 +10,6 @@ Param<String, String> queryParam = new QueryParam(new HashMap<>());
 queryParam.addParam("q", "Hello+World!");
 ```
 We can specify POST Body in this manner:
-We can specify GET Url parameter in this manner:
 ```java
 //Construct params in BODY
 Param<String, String> bodyParam = new BodyParam(new HashMap<>());
