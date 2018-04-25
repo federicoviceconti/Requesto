@@ -25,7 +25,7 @@ Request requestGet = new Request.Builder()
   .setBaseUrl("https://jsonplaceholder.typicode.com")
   .addSubPathToBaseUrl("posts")
   .addSubPathToBaseUrl("1")
-  .setRequestMethod(RequestMethod.DELETE)
+  .setRequestMethod(RequestMethod.GET)
   .setUserAgent(RequestUserAgent.MOZILLA_WIN_UA)
 .create();
 
